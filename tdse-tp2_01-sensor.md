@@ -1,4 +1,4 @@
-## Paso 03 - Implementación del modelo Sensor
+## Implementación del modelo Sensor
 
 Se modificó el código fuente del modelo Sensor para implementar el
 diagrama de estados correspondiente al botón `BTN_A`, asociado al
@@ -28,29 +28,22 @@ pulsador. Una vez confirmada una pulsación o liberación, el modelo
 Sensor envía al modelo System los eventos correspondientes mediante
 `put_event_task_system()`.
 
-## Paso 04 - Depuración del modelo Sensor
+## Depuración del modelo Sensor
 
-Se realizó la depuración del proyecto
-`tdse-tp2_01-model_integration` para verificar el funcionamiento
-del modelo Sensor.
+Se realizó la depuración del proyecto mediante STM32CubeIDE con el objetivo de verificar el correcto funcionamiento del modelo `Sensor`.
 
-La tarea `task_sensor` se ejecuta con un período de actualización
-de 1 ms.
+Luego de varias ejecuciones de `app_update()`, se observaron los valores almacenados en `task_sensor_dta_list[0]` para las condiciones de botón liberado y botón presionado.
 
-Se observaron durante la depuración los valores de
-`task_sensor_dta_list[0]`:
+Los valores obtenidos fueron:
 
-- `state`: estado actual de la máquina de estados.
-- `event`: estado detectado del botón B1.
-- `tick`: contador utilizado para la temporización del antirrebote.
+| Condición de B1 | `tick` | `state` | `event` |
+|---|---:|---|---|
+| Botón liberado | 0 | `ST_BTN_UP` | `EV_BTN_UP` |
+| Botón presionado | 0 | `ST_BTN_DOWN` | `EV_BTN_DOWN` |
 
-### Valores observados
+Cuando el botón B1 se encuentra liberado, el modelo permanece en el estado `ST_BTN_UP` y presenta el evento `EV_BTN_UP`. Al presionar el botón B1, el estado cambia a `ST_BTN_DOWN` y el evento a `EV_BTN_DOWN`.
 
-| Condición de B1 | state | event | tick |
-|---|---|---|---|
-| Botón liberado | ST_BTN_UP | EV_BTN_UP | ... |
-| Transición al presionar | ST_BTN_FALLING | EV_BTN_DOWN | ... |
-| Botón presionado | ST_BTN_DOWN | EV_BTN_DOWN | ... |
-| Transición al liberar | ST_BTN_RISING | EV_BTN_UP | ... |
+En ambas condiciones se observó un valor de `tick = 0`. Considerando que la tarea `Sensor` se ejecuta mediante un esquema temporizado *Update by Time Code* con un período de 1 ms, la unidad asociada al contador `tick` es el milisegundo (ms).
 
-Unidad temporal de `tick`: 1 ms por incremento/decremento de tick.
+De esta manera, mediante la depuración se verificó el cambio de estado y de evento del modelo `Sensor` en función de la condición del botón B1.
+ck.
